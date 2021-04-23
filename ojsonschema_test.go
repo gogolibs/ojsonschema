@@ -24,6 +24,31 @@ var testCases = []struct {
 		actual:   ojsonschema.String{Format: "regex"},
 	},
 	{
+		name:     "string: enum",
+		expected: `{ "type": "string", "enum": ["one", "two", "three"] }`,
+		actual:   ojsonschema.String{Enum: ojson.Array{"one", "two", "three"}},
+	},
+	{
+		name:     "integer: simple",
+		expected: `{ "type": "integer" }`,
+		actual:   ojsonschema.Integer{},
+	},
+	{
+		name:     "integer: enum",
+		expected: `{ "type": "integer", "enum": [1, 2, 3] }`,
+		actual:   ojsonschema.Integer{Enum: ojson.Array{1, 2, 3}},
+	},
+	{
+		name:     "number: simple",
+		expected: `{ "type": "number" }`,
+		actual:   ojsonschema.Number{},
+	},
+	{
+		name:     "number: enum",
+		expected: `{ "type": "number", "enum": [1, 2.0, 3] }`,
+		actual:   ojsonschema.Number{Enum: ojson.Array{1, 2.0, 3}},
+	},
+	{
 		name:     "object: simple",
 		expected: `{ "type": "object" }`,
 		actual:   ojsonschema.Object{},
@@ -49,6 +74,16 @@ var testCases = []struct {
 			ojsonschema.String{},
 			ojsonschema.Object{},
 		),
+	},
+	{
+		name:     "enum",
+		expected: `{ "enum": [ "one", 1, null ] }`,
+		actual:   ojsonschema.Enum("one", 1, nil),
+	},
+	{
+		name:     "const",
+		expected: `{ "const": "hello" }`,
+		actual:   ojsonschema.Const("hello"),
 	},
 }
 
