@@ -14,14 +14,19 @@ type Object struct {
 	AdditionalProperties ojson.Anything
 }
 
-// MarshalJSON converts Object to a corresponding jsonschema object
-func (o Object) MarshalJSON() ([]byte, error) {
-	return json.Marshal(removeNilValues(ojson.Object{
+// ToPlainObject converts Object to a corresponding ojson.Object
+func (o Object) ToPlainObject() ojson.Object {
+	return removeNilValues(ojson.Object{
 		"type":                 "object",
 		"additionalProperties": o.AdditionalProperties,
 		"properties":           o.Properties,
 		"required":             o.Required,
-	}))
+	})
+}
+
+// MarshalJSON converts Object to a corresponding jsonschema object
+func (o Object) MarshalJSON() ([]byte, error) {
+	return json.Marshal(o.ToPlainObject())
 }
 
 // Array represents array jsonschema instance
@@ -31,12 +36,17 @@ type Array struct {
 	Items ojson.Anything
 }
 
-// MarshalJSON converts Array to a corresponding jsonschema object
-func (a Array) MarshalJSON() ([]byte, error) {
-	return json.Marshal(removeNilValues(ojson.Object{
+// ToPlainObject converts Array to a corresponding ojson.Object
+func (a Array) ToPlainObject() ojson.Object {
+	return removeNilValues(ojson.Object{
 		"type":  "array",
 		"items": a.Items,
-	}))
+	})
+}
+
+// MarshalJSON converts Array to a corresponding jsonschema object
+func (a Array) MarshalJSON() ([]byte, error) {
+	return json.Marshal(a.ToPlainObject())
 }
 
 // String represents string jsonschema instance
@@ -47,23 +57,18 @@ type String struct {
 	Format ojson.Anything
 }
 
-// MarshalJSON converts String to a corresponding jsonschema object
-func (s String) MarshalJSON() ([]byte, error) {
-	return json.Marshal(removeNilValues(ojson.Object{
+// ToPlainObject converts String to a corresponding ojson.Object
+func (s String) ToPlainObject() ojson.Object {
+	return removeNilValues(ojson.Object{
 		"type":   "string",
 		"enum":   s.Enum,
 		"format": s.Format,
-	}))
+	})
 }
 
-func removeNilValues(obj ojson.Object) ojson.Object {
-	objWithoutNils := ojson.Object{}
-	for key, value := range obj {
-		if value != nil {
-			objWithoutNils[key] = value
-		}
-	}
-	return objWithoutNils
+// MarshalJSON converts String to a corresponding jsonschema object
+func (s String) MarshalJSON() ([]byte, error) {
+	return json.Marshal(s.ToPlainObject())
 }
 
 // Const represents const jsonschema instance with a single key
@@ -96,12 +101,17 @@ type Integer struct {
 	Enum ojson.Anything
 }
 
-// MarshalJSON converts Integer to a corresponding jsonschema object
-func (i Integer) MarshalJSON() ([]byte, error) {
-	return json.Marshal(removeNilValues(ojson.Object{
+// ToPlainObject converts Integer to a corresponding ojson.Object
+func (i Integer) ToPlainObject() ojson.Object {
+	return removeNilValues(ojson.Object{
 		"type": "integer",
 		"enum": i.Enum,
-	}))
+	})
+}
+
+// MarshalJSON converts Integer to a corresponding jsonschema object
+func (i Integer) MarshalJSON() ([]byte, error) {
+	return json.Marshal(i.ToPlainObject())
 }
 
 // Number represents number jsonschema instance
@@ -111,10 +121,33 @@ type Number struct {
 	Enum ojson.Anything
 }
 
-// MarshalJSON converts Number to a corresponding jsonschema object
-func (n Number) MarshalJSON() ([]byte, error) {
-	return json.Marshal(removeNilValues(ojson.Object{
+// ToPlainObject converts Number to a corresponding ojson.Object
+func (n Number) ToPlainObject() ojson.Object {
+	return removeNilValues(ojson.Object{
 		"type": "number",
 		"enum": n.Enum,
-	}))
+	})
+}
+
+// MarshalJSON converts Number to a corresponding jsonschema object
+func (n Number) MarshalJSON() ([]byte, error) {
+	return json.Marshal(n.ToPlainObject())
+}
+
+// Ref represents ref jsonschema instance with a single key
+// {"$ref": <value>}
+func Ref(ref string) ojson.Object {
+	return ojson.Object{
+		"$ref": ref,
+	}
+}
+
+func removeNilValues(obj ojson.Object) ojson.Object {
+	objWithoutNils := ojson.Object{}
+	for key, value := range obj {
+		if value != nil {
+			objWithoutNils[key] = value
+		}
+	}
+	return objWithoutNils
 }

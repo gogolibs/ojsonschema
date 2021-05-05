@@ -85,6 +85,11 @@ var testCases = []struct {
 		expected: `{ "const": "hello" }`,
 		actual:   ojsonschema.Const("hello"),
 	},
+	{
+		name:     "ref",
+		expected: `{ "$ref": "#/definitions/some" }`,
+		actual:   ojsonschema.Ref("#/definitions/some"),
+	},
 }
 
 func TestCases(t *testing.T) {
